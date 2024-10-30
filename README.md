@@ -19,21 +19,22 @@
      <img src="https://i.imgur.com/mUTcNU7.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
 
 - Familiarize yourself with the main log categories:
-  - Application Logs: Logs related to applications and services.
-  - Security Logs: Logs related to security events (e.g., logon attempts).
-  - System Logs: Logs related to Windows system events.
+  -  <b>Application Logs </b>: Logs related to applications and services.
+  -  <b>Security Logs </b>: Logs related to security events (e.g., logon attempts).
+  -  <b>System Logs </b>: Logs related to Windows system events.
 
       <img src="https://i.imgur.com/cs76zjJ.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
+
 ### Key Event Logs to Monitor
 - <b><ins>Security Log:</b></ins>
-  - Event ID 4624: Successful logon.
-  - Event ID 4625: Failed logon attempts (indicating potential brute force attacks).
-  - Event ID 4648: A logon attempt using explicit credentials.
+  -  <b>Event ID 4624 </b>: Successful logon.
+  -  <b>Event ID 4625 </b>: Failed logon attempts (indicating potential brute force attacks).
+  -  <b>Event ID 4648 </b>: A logon attempt using explicit credentials.
 - <b><ins>System Log:</b></ins>
-  - Event ID 6005: The Event Log service was started (system boot).
-  - Event ID 6006: The Event Log service was stopped (system shutdown).
+  -  <b>Event ID 6005 </b>: The Event Log service was started (system boot).
+  -  <b>Event ID 6006 </b>: The Event Log service was stopped (system shutdown).
 - <b><ins>Application Log:</b></ins>
-  - Monitor for application errors or warnings that may indicate malicious activity.
+  - Monitor for application  <b>errors or warnings </b> that may indicate malicious activity.
 
 ## <b>Installing Sysmon </b>:
 - Download Sysmon from Microsoft Sysinternals. Here are the links below: 
@@ -50,19 +51,21 @@
 - Modify <ins>sysmon-config.xml</ins> to include rules for detecting suspicious activities.
 - Enable logging for DLL loading and loading events specifically.
   -  Run this following command or go from the sysmonconfig-export.xml file, you need to open with notepad and change the ‘include’ to ‘exclude’
+
     <img src="https://i.imgur.com/8xMkiWC.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
     <img src="https://i.imgur.com/KvvJRgJ.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
     
 
 ### Collecting Event Logs
 - Open Event Viewer and navigate to <b>Applications and Services Logs > Microsoft > Windows > Sysmon > Operational</b>
+
     <img src="https://i.imgur.com/RtH4E85.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
 
 ### Identifying Important Events:
 - Look for:
-  - Event ID 1: Process creation.
-  - Event ID 7: Image loaded (for DLL loading).
-  - Event ID 10: Process accessed.
+  - <b>Event ID 1 </b>: Process creation.
+  - <b>Event ID 7 </b>: Image loaded (for DLL loading).
+  - <b>Event ID 10 </b>: Process accessed.
 
     <img src="https://i.imgur.com/0Sh2MU9.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
     <img src="https://i.imgur.com/tKxRbgf.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
