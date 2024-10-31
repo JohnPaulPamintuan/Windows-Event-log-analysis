@@ -6,7 +6,7 @@
 ## Tool Used: 
 - <b>Event logs </b>: Built-in logging mechanism in Windows for recording system events, including security events, application events, and system events.
 - <b>Event Viewer</b> : A Microsoft Management Console (MMC) application that allows users to view and analyze event logs on Windows systems.
-- <b>Sysmon (System Monitor) </b> : A Windows system service that logs system activity to the Windows Event Log.
+- <b>Sysmon (System Monitor) </b> :  System Monitor (Sysmon) is a Windows system service and device driver that remains resident across system reboots to monitor and log system activity to the Windows event log. Sysmon provides detailed information about process creation, network connections, changes to file creation time, and more.
 
 ## Purposes: 
 - Enhance security visibility on Windows Servers.
@@ -36,6 +36,7 @@
 - <b><ins>Application Log:</b></ins>
   - Monitor for application  <b>errors or warnings </b> that may indicate malicious activity.
 
+# <b>Detecting DLL hijacking with Sysmon logs </b>:
 ## <b>Installing Sysmon </b>:
 - Download Sysmon from Microsoft Sysinternals. Here are the links below: 
   - [Sysmon](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon)
@@ -52,9 +53,20 @@
 - Enable logging for DLL loading and loading events specifically.
   -  Run this following command or go from the sysmonconfig-export.xml file, you need to open with notepad and change the ‘include’ to ‘exclude’
 
-    <img src="https://i.imgur.com/8xMkiWC.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
+    <img src="https://i.imgur.com/YztyYRa.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
     <img src="https://i.imgur.com/KvvJRgJ.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
     
+# DLL hijacking & detection in action
+- In this walkthrough, I’ll hijack a DLL used by calc.exe. Let’s first start of by identifying the DLLs loaded by calc.exe, I will be doing this by simply running Process Monitor and running calc.exe. 
+
+     <img src="https://i.imgur.com/lf20S9C.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
+Highlighted above is C:\Windows\System32\wininet.dll , which is loaded into the memory of the calc.exe process.
+
+- Now we have identified a possible DLL that we can recreate with our own rouge one let’s get on with the hijacking. I cheated and used this prebuilt PoC DLL from Stephen Fewer, this will not do anything malicious, but instead just display a ‘Hello from DLLMain!’ pop up box if it has been successfully hijacked. I then used the ‘Relative Path DLL’ method mentioned earlier and just copied calc.exe and the rouge DLL to my own folder. I also renamed my rouge DLL to wininet.dll, this way it would masquerade as a legitimate one and load successfully.
+- This time when I double-clicked calc.exe to execute, instead of the calculator opening, I got prompted with this ‘Hello from DLLMain!’ message. We can see on process monitor this time, wininet.dll (the rouge one) was loaded — but not from the file location C:\Windows\System32\wininet.dll !
+  
+   <img src="https://i.imgur.com/EHHHfqY.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
+
 
 ### Collecting Event Logs
 - Open Event Viewer and navigate to <b>Applications and Services Logs > Microsoft > Windows > Sysmon > Operational</b>
@@ -68,8 +80,20 @@
   - <b>Event ID 10 </b>: Process accessed.
 
     <img src="https://i.imgur.com/0Sh2MU9.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
-    <img src="https://i.imgur.com/tKxRbgf.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
-    <img src="https://i.imgur.com/HNzN7o1.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
-    
+
+- Filtering Event:  
+    <img src="https://i.imgur.com/nfbEOLu.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
+    <img src="https://i.imgur.com/PjOcEv2.png" height="60%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
+
+- In Event Viewer we can observe there is a lot events. As we are looking for evidence of DLL hijacking I will be searching for Event ID 7, ImageLoad. This event logs all instances of DLLs being loaded into a programs memory.
+
+- Here we can see the forensic artefact of DLL hijacking residing in our sysmon log. Let’s quickly compare this to the the log entry of the the legitimate DLL loaded by a legitimate calc.exe
+  
+    <img src="https://i.imgur.com/pI1URyz.png" height="80%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
+    <img src="https://i.imgur.com/zVLPLVC.png" height="80%" width="80%" alt="Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server"/>
+ - Comparing the two can help us identify useful IOCs of DLL hijacking:
+   - Our rouge DLL is not signed, however, the legit DLL is signed by ‘Microsoft Windows’. This is a big indicator that something dodgy may be going on
+   - The rouge DLL (and actual calc.exe!) is loaded from C:\Users\cyben\...\ReflectiveDLLInjection , whereas legitimate DLLs will almost always be found in C:\Windows\System32 or ProgramFiles directories. This is an indicator of Relative Path DLL hijacking
+   - We can also notice that the hashes of the two wininet.dll files are non-equal, the meaning the two DLLs themselves are completely different.   
     
      
