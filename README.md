@@ -1,7 +1,7 @@
 # Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server
 
 ## Description:
-- <b>Windows Event Log</b>:  are an intrinsic part of the Windows Operating System, storing logs from different components of the system including the system itself, applications running on it, ETW providers, services, and others. Windows event logging offers comprehensive logging capabilities for application errors, security events, and diagnostic information.
+- <b>Windows Event Logs</b>:  are an intrinsic part of the Windows Operating System, storing logs from different components of the system including the system itself, applications running on it, ETW providers, services, and others. Windows event logging offers comprehensive logging capabilities for application errors, security events, and diagnostic information.
 
 ## Tool Used: 
 - <b>Event logs </b>: Built-in logging mechanism in Windows for recording system events, including security events, application events, and system events.
