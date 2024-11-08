@@ -94,6 +94,6 @@ Highlighted above is C:\Windows\System32\wininet.dll , which is loaded into the 
  - Comparing the two can help us identify useful IOCs of DLL hijacking:
    - Our rouge DLL is not signed, however, the legit DLL is signed by ‘Microsoft Windows’. This is a big indicator that something dodgy may be going on
    - The rouge DLL (and actual calc.exe!) is loaded from C:\Users\cyben\...\ReflectiveDLLInjection , whereas legitimate DLLs will almost always be found in C:\Windows\System32 or ProgramFiles directories. This is an indicator of Relative Path DLL hijacking
-   - We can also notice that the hashes of the two wininet.dll files are non-equal, the meaning the two DLLs themselves are completely different.   
+   - We can also notice that the hashes of the two wininet.dll files are non-equal, meaning the two DLLs themselves are completely different.   
     
      
