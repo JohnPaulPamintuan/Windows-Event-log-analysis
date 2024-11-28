@@ -1,4 +1,5 @@
 # Using Sysmon and Event logs to detect and analyse malicious activity on Windows Server
+ETW (Event tracing for Windows): https://github.com/JohnPaulPamintuan/ETW
 
 ## Description:
 - <b>Windows Event Logs</b> :  are an intrinsic part of the Windows Operating System, storing logs from different components of the system including the system itself, applications running on it, ETW providers, services, and others. Windows event logging offers comprehensive logging capabilities for application errors, security events, and diagnostic information.
@@ -96,4 +97,4 @@ Highlighted above is C:\Windows\System32\wininet.dll , which is loaded into the 
    - The rouge DLL (and actual calc.exe!) is loaded from C:\Users\cyben\...\ReflectiveDLLInjection , whereas legitimate DLLs will almost always be found in C:\Windows\System32 or ProgramFiles directories. This is an indicator of Relative Path DLL hijacking
    - We can also notice that the hashes of the two wininet.dll files are non-equal, meaning the two DLLs themselves are completely different.   
     
-     
+
